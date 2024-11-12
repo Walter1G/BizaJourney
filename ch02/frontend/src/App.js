@@ -7,7 +7,14 @@ function App() {
   const [data, setData] = useState([]);
   const [data1, setData1] = useState([]);
   const [data2, setData2] = useState([]);
-  const [data3,setData3]=useState([])
+  const { data3, isLoading, error } = useQuery(
+    "speakers",
+    () => {
+      axios("https://jsonplaceholder.typicode.com/users");
+      if (error) return <h4>Error: {error.message}</h4>
+      if(isLoading) return <h4>...Loading data</h4>
+    }
+  )
 
   // Using Fetch API
   const getUsers = () => {
@@ -38,6 +45,7 @@ function App() {
     fetchSpeakers();
   }, [data1]);
 
+  // use Axios
   const loadSpeakers = () => {
     axios.get("https://jsonplaceholder.typicode.com/users").then((response) => {
       setData2(response.data);
@@ -47,6 +55,10 @@ function App() {
   useEffect(() => {
     loadSpeakers();
   }, []);
+
+
+  // use react-query
+
 
   return (
     <>
@@ -76,6 +88,16 @@ function App() {
             {item.name}, <em>{item.email}</em>
           </li>
         ))}
+      </ul>
+
+      [using react Query]
+      <ul>
+        {data3.data.map(speaker => (
+        
+          <li key={speaker.id}> {speaker.name}, <em>{ speaker.email}</em></li>
+          
+        ))}
+      
       </ul>
     </>
   );
